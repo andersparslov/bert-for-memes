@@ -1,7 +1,9 @@
 bert-for-memes
 ==============================
 
-The point of this project is to predict humor given the text from memes. The data is sourced from the Memotion dataset (https://www.kaggle.com/williamscott701/memotion-dataset-7k), we finetune an uncased distilbert model (https://huggingface.co/distilbert-base-uncased) to the data.
+The goal of this project is to take as input the text of a meme, and predict the degree of humour. The labels are ordinal-categorical, i.e. the degree of humour is encoded as 0 -> not funny, 1 -> funny, 2 ->very funny and 3 -> hilarious. We use the pretrained transformer based model to take the tokenized text as input and convert this to a latent space representation in which the degree of humor is discernible. We use an extra sequence classification layer when finetuning.
+
+The data is sourced from the Memotion dataset (https://www.kaggle.com/williamscott701/memotion-dataset-7k), we finetune an uncased distilbert model  (https://huggingface.co/distilbert-base-uncased) to the data. Distilbert is smaller version of BERT which has around half as many parameters but can achieve nearly the same performance on many downstream tasks. Uncased means that we don't discern between "Uncased" and "uncased".
 
 Project Organization
 ------------
