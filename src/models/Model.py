@@ -4,7 +4,7 @@ import torch.nn as nn
 
 
 class MemeModel(nn.Module):
-
+    
     def __init__(self, device, num_labels=2):
         super().__init__()
         self.device = device
