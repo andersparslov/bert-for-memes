@@ -4,6 +4,10 @@ import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 
+import numpy as np
+import pickle
+import torch
+
 
 @click.command()
 @click.argument('input_filepath', type=click.Path(exists=True))
@@ -14,6 +18,34 @@ def main(input_filepath, output_filepath):
     """
     logger = logging.getLogger(__name__)
     logger.info('making final data set from raw data')
+
+    # Load data 
+    with open(input_filepath,"rb") as file_handle:
+        data_df = pickle.load(file_handle)
+
+    # Cleaning: drop NAs
+    data_df = data_df.dropna()
+
+    # Cleaning: map 4 values of 'humour' to numeric
+    def categorize_humour(x):
+        if x == 'not_funny':
+            return 0
+        elif x == 'funny':
+            return 1
+        elif x == 'very_funny':
+            return 2
+        else: # hilarious
+            return 3
+    
+    texts = data_df.text_corrected.to_numpy(dtype=str)
+    labels = data_df.humour.apply(categorize_humour).to_numpy()
+    
+    # Save processed data
+    data_dict = {'texts':texts, 'labels':labels}
+
+    with open(output_filepath,"wb") as file_handle:
+        pickle.dump(data_dict, file_handle)
+
 
 
 if __name__ == '__main__':
