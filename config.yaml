@@ -7,3 +7,4 @@ hyperparameters:
   epochs : 1
   seed : 1234
   shuffle : True
+  save_every : 1000
