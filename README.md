@@ -6,6 +6,12 @@ The goal of this project is to take as input the text of a meme, and predict the
 The data is sourced from the Memotion dataset (https://www.kaggle.com/williamscott701/memotion-dataset-7k), we finetune an uncased distilbert model  (https://huggingface.co/distilbert-base-uncased) to the data. Distilbert is smaller version of BERT which has around half as many parameters but can achieve nearly the same performance on many downstream tasks. Uncased means that we don't discern between "Uncased" and "uncased".
 
 
+### Sample data
+![sample_data1](data/raw/images/image_18.jpg?raw=true)
+![sample_data2](data/raw/images/image_14.jpg?raw=true)
+
+### Labels distribution
+Humour distribution:
 ![Figure1](reports/figures/humour_distribution.png?raw=true "Humour distribution")
 
 Project Organization
