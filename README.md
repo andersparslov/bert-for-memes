@@ -1,7 +1,7 @@
 bert-for-memes
 ==============================
 
-The point of this project is to predict humor given the text from memes. The data is sourced from (https://www.kaggle.com/williamscott701/memotion-dataset-7k), we finetune an uncased distilbert model (https://huggingface.co/distilbert-base-uncased) to the data.
+The point of this project is to predict humor given the text from memes. The data is sourced from the Memotion dataset (https://www.kaggle.com/williamscott701/memotion-dataset-7k), we finetune an uncased distilbert model (https://huggingface.co/distilbert-base-uncased) to the data.
 
 Project Organization
 ------------
