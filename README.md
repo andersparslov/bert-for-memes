@@ -7,8 +7,10 @@ The data is sourced from the Memotion dataset (https://www.kaggle.com/williamsco
 
 
 ### Sample data
-![sample_data1](data/raw/images/image_18.jpg?raw=true)
-![sample_data2](data/raw/images/image_14.jpg?raw=true)
+
+![sampledata1](data/raw/images/image_18.jpg?raw=true "Image 18")
+
+![sampledata2](data/raw/images/image_14.png?raw=true "Image 14")
 
 ### Labels distribution
 Humour distribution:
