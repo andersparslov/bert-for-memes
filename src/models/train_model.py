@@ -15,35 +15,31 @@ from torch import nn
 import matplotlib.pyplot as plt
 from torch.utils.data import TensorDataset, DataLoader
 
+import sys 
+from src.data.dataset import * 
+
 @click.command()
 @click.argument('input_filepath_data', type=click.Path(exists=True))
 @click.argument('output_filepath_model', type=click.Path(exists=True))
 @click.argument('output_plot_model', type=click.Path())
+
 def main(input_filepath_data, output_filepath_model, output_plot_model):
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print('Is CUDA? ', torch.cuda.is_available())
 
-    model = MemeModel(device, num_labels=2)
+    model = MemeModel(config=None, device=device, num_labels=4)
+    
 
-    #train_set_text = torch.load(input_filepath_data + "/text_train.pt")
-    #train_set_labels = torch.load(input_filepath_data + "/labels_train.pt")
-
-    #train_set = TensorDataset(train_set_images, train_set_labels)
-
-
-    # Dummy Data ###################
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-    text = "Replace me by any text you'd like."
-    encoded_input = tokenizer(text, truncation=True, padding=True)
-    encoded_input['labels'] = 0
-    print(encoded_input)
-    train_set = [encoded_input] * 10000
-    #####################
-    trainloader = torch.utils.data.DataLoader(train_set, batch_size=64, shuffle=True)
+    train_set = Dataset(input_filepath_data,tokenizer=tokenizer,device=device)
 
-    criterion = nn.NLLLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.003)
+    
+    trainloader = torch.utils.data.DataLoader(train_set, batch_size=16, shuffle=True)
+
+    #criterion = nn.CrossEntropyLoss() #nn.NLLLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0003)
+    
 
     epochs = 13
     steps = 0
@@ -55,12 +51,12 @@ def main(input_filepath_data, output_filepath_model, output_plot_model):
     for e in range(epochs):
         # Model in training mode, dropout is on
         model.train()
-        for item in trainloader:
+        for text, labels in trainloader:
             steps += 1
 
             optimizer.zero_grad()
 
-            y_pred, loss = model(item)
+            y_pred, loss = model(text['input_ids'].squeeze(), text['attention_mask'].squeeze(), labels)
 
             loss.backward()
             optimizer.step()
