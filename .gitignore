@@ -89,3 +89,7 @@ target/
 
 # Requirements
 requirements.txt
+
+# Models 
+models/finetuned/.
+models/pretrained/.
