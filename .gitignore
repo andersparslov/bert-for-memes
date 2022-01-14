@@ -91,7 +91,7 @@ target/
 requirements.txt
 
 # Models 
-models/.
+models/
 models/finetuned/.
 models/pretrained/.
 *.bin
