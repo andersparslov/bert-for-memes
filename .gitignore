@@ -91,5 +91,8 @@ target/
 requirements.txt
 
 # Models 
+models/.
 models/finetuned/.
 models/pretrained/.
+*.bin
+*.json

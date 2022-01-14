@@ -14,7 +14,7 @@ class MemeModel(nn.Module):
         if "pretrained" not in os.listdir("models"):
             os.mkdir("models/pretrained")
 
-        if "finetuned" not in os.lisdir("models"):
+        if "finetuned" not in os.listdir("models"):
             os.mkdir("models/finetuned")
 
         if "distilbert-base-uncased" in os.listdir("models/pretrained"):
