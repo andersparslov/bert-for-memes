@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import click
 import logging
+import hydra
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 from torchvision import datasets, transforms
@@ -11,34 +12,46 @@ import sys
 import torch
 from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 from Model import MemeModel
+from variable import PROJECT_PATH
 from torch import nn
 import matplotlib.pyplot as plt
 from torch.utils.data import TensorDataset, DataLoader
 
 import sys 
-from src.data.dataset import * 
+from src.data.dataset import *
 
-@click.command()
-@click.argument('input_filepath_data', type=click.Path(exists=True))
-@click.argument('output_filepath_model', type=click.Path(exists=True))
-@click.argument('output_plot_model', type=click.Path())
+# Note: Hydra is incompatible with @click
+@hydra.main(config_path= PROJECT_PATH / "configs",config_name="/config.yaml")
 
-def main(input_filepath_data, output_filepath_model, output_plot_model):
+
+#@click.command()
+#@click.argument('input_filepath_data', type=click.Path(exists=True))
+#@click.argument('output_filepath_model', type=click.Path(exists=True))
+#@click.argument('output_plot_model', type=click.Path())
+
+
+def main(cfg):
+    input_filepath_data = str(PROJECT_PATH / "data" / "processed")
+    output_filepath_model = str(PROJECT_PATH / "models")
+    output_plot_model = str(PROJECT_PATH / "reports" / "figures")
+
+    learning_rate = cfg.hyperparameters.learning_rate
+    batch_size = cfg.hyperparameters.batch_size
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print('Is CUDA? ', torch.cuda.is_available())
 
-    model = MemeModel(config=None, device=device, num_labels=4)
+    model = MemeModel(config=cfg, device=device, num_labels=4)
     
 
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
     train_set = Dataset(input_filepath_data,tokenizer=tokenizer,device=device)
 
     
-    trainloader = torch.utils.data.DataLoader(train_set, batch_size=16, shuffle=True)
+    trainloader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
 
     #criterion = nn.CrossEntropyLoss() #nn.NLLLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0003)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     
 
     epochs = 13
@@ -48,6 +61,10 @@ def main(input_filepath_data, output_filepath_model, output_plot_model):
     steps_list = []
 
     print_every = 100
+
+    print('running done')
+
+    '''
     for e in range(epochs):
         # Model in training mode, dropout is on
         model.train()
@@ -83,6 +100,8 @@ def main(input_filepath_data, output_filepath_model, output_plot_model):
     plt.show()
     plt.savefig(output_plot_model + '/training_plot.png')
     plt.close()
+    
+    '''
 
 
 if __name__ == '__main__':

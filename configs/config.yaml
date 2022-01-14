@@ -2,9 +2,9 @@
 hyperparameters:
   dataset_path : 'data/processed/'
   cuda : True
-  batch_size : 32
-  lr : 1e-5
-  epochs : 1
+  batch_size : 16
+  learning_rate : 0.003
+  epochs : 16
   seed : 1234
   shuffle : True
   save_every : 1000
