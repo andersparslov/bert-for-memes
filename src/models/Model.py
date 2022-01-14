@@ -9,6 +9,14 @@ class MemeModel(nn.Module):
         super().__init__()
         #self.save_every = config.save_every
         self.device = device
+
+        # Add model folders if not presetn
+        if "pretrained" not in os.listdir("models"):
+            os.mkdir("models/pretrained")
+
+        if "finetuned" not in os.lisdir("models"):
+            os.mkdir("models/finetuned")
+
         if "distilbert-base-uncased" in os.listdir("models/pretrained"):
             model_path = "models/pretrained/distilbert-base-uncased"
         else:
