@@ -3,6 +3,8 @@ import click
 import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
+from torchvision import datasets, transforms
+import numpy as np
 import torch
 import argparse
 import sys
@@ -11,6 +13,7 @@ from transformers import DistilBertTokenizer
 from Model import MemeModel
 from torch import nn
 import matplotlib.pyplot as plt
+from torch.utils.data import TensorDataset, DataLoader
 
 import sys 
 from src.data.dataset import * 
@@ -48,14 +51,17 @@ def main(input_filepath_data, output_filepath_model, output_plot_model):
     running_losses = []
     steps_list = []
 
+    print_every = 100
     for e in range(epochs):
         # Model in training mode, dropout is on
         model.train()
         for text, labels in trainloader:
+            steps += 1
+
             optimizer.zero_grad()
 
-            y_pred, loss = model(text['input_ids'].squeeze(), 
-                                 text['attention_mask'].squeeze(), 
+            y_pred, loss = model(text['input_ids'].squeeze(),
+                                 text['attention_mask'].squeeze(),
                                  labels)
 
             loss.backward()
@@ -69,8 +75,8 @@ def main(input_filepath_data, output_filepath_model, output_plot_model):
                 correct_count = 0
                 for text, labels in valloader:
                     with torch.no_grad():
-                        y, loss = model(text['input_ids'].squeeze(), 
-                                        text['attention_mask'].squeeze(), 
+                        y, loss = model(text['input_ids'].squeeze(),
+                                        text['attention_mask'].squeeze(),
                                         labels)
                         y = torch.argmax(y, dim=1)
                         correct_count += torch.sum(y == labels)
@@ -78,11 +84,12 @@ def main(input_filepath_data, output_filepath_model, output_plot_model):
 
                 running_losses.append(running_loss / print_every)
                 mean_loss = running_loss / print_every
-                print('Epoch: {}/{} - Training loss: {:.2f} Validation accuracy {:.2f}'.format(e, 
-                                                                                               epochs, 
-                                                                                               mean_loss, 
+                print('Epoch: {}/{} - Training loss: {:.2f} Validation accuracy {:.2f}'.format(e,
+                                                                                               epochs,
+                                                                                               mean_loss,
                                                                                                accuracy))
                 steps_list.append(steps)
+
                 running_loss = 0
 
 

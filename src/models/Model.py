@@ -2,7 +2,7 @@ from transformers import DistilBertTokenizer, DistilBertForSequenceClassificatio
 import os
 import torch.nn as nn
 
-
+# TODO: remake the model so it does not take a config file but the direct parameters (save_every, etc.) instead
 class MemeModel(nn.Module):
     
     def __init__(self, config, device, num_labels=2):
