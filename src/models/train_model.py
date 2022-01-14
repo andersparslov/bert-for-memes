@@ -3,17 +3,14 @@ import click
 import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
-from torchvision import datasets, transforms
-import numpy as np
 import torch
 import argparse
 import sys
 import torch
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
+from transformers import DistilBertTokenizer
 from Model import MemeModel
 from torch import nn
 import matplotlib.pyplot as plt
-from torch.utils.data import TensorDataset, DataLoader
 
 import sys 
 from src.data.dataset import * 
@@ -27,36 +24,39 @@ def main(input_filepath_data, output_filepath_model, output_plot_model):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print('Is CUDA? ', torch.cuda.is_available())
-
-    model = MemeModel(config=None, device=device, num_labels=4)
     
-
-    tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-    train_set = Dataset(input_filepath_data,tokenizer=tokenizer,device=device)
-
-    
-    trainloader = torch.utils.data.DataLoader(train_set, batch_size=16, shuffle=True)
-
-    #criterion = nn.CrossEntropyLoss() #nn.NLLLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0003)
-    
-
+    batch_size = 4
+    lr = 1e-4
     epochs = 13
+    print_every = 2
+    num_labels = 4
+    N_train = 6000
+    N_test = 830
+
+    # Create model, tokenizer, dataset
+    model = MemeModel(config=None, device=device, num_labels=num_labels)
+    tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
+    dataset = Dataset(input_filepath_data,tokenizer=tokenizer,device=device)
+    train_set, val_set = torch.utils.data.random_split(dataset, [N_train, N_test])
+    # Define data loader and optimizer
+    trainloader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
+    valloader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=True)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+
     steps = 0
     running_loss = 0
     running_losses = []
     steps_list = []
 
-    print_every = 100
     for e in range(epochs):
         # Model in training mode, dropout is on
         model.train()
         for text, labels in trainloader:
-            steps += 1
-
             optimizer.zero_grad()
 
-            y_pred, loss = model(text['input_ids'].squeeze(), text['attention_mask'].squeeze(), labels)
+            y_pred, loss = model(text['input_ids'].squeeze(), 
+                                 text['attention_mask'].squeeze(), 
+                                 labels)
 
             loss.backward()
             optimizer.step()
@@ -66,16 +66,28 @@ def main(input_filepath_data, output_filepath_model, output_plot_model):
             if steps % print_every == 0:
                 model.eval()
                 # Model in inference mode, dropout is off
+                correct_count = 0
+                for text, labels in valloader:
+                    with torch.no_grad():
+                        y, loss = model(text['input_ids'].squeeze(), 
+                                        text['attention_mask'].squeeze(), 
+                                        labels)
+                        y = torch.argmax(y, dim=1)
+                        correct_count += torch.sum(y == labels)
+                accuracy = correct_count / len(val_set)
 
                 running_losses.append(running_loss / print_every)
                 mean_loss = running_loss / print_every
-                print('Epoch: {}/{} - Training loss: {:.2f}'.format(e, epochs, mean_loss))
-
+                print('Epoch: {}/{} - Training loss: {:.2f} Validation accuracy {:.2f}'.format(e, 
+                                                                                               epochs, 
+                                                                                               mean_loss, 
+                                                                                               accuracy))
                 steps_list.append(steps)
-
                 running_loss = 0
 
-    torch.save(model.state_dict(), output_filepath_model + "/checkpoint.pth")
+
+    #torch.save(model.state_dict(), output_filepath_model + "models/finetuned/checkpoint.pth")
+    model.save()
 
     plt.plot(steps_list, running_losses)
     plt.legend()
