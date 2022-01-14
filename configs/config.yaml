@@ -1,10 +1,9 @@
 #config.yaml
 hyperparameters:
-  dataset_path : 'data/processed/'
-  cuda : True
-  batch_size : 16
-  learning_rate : 0.003
-  epochs : 16
-  seed : 1234
-  shuffle : True
-  save_every : 1000
+  batch_size : 4
+  lr : 1e-4
+  epochs : 13
+  print_every : 2
+  num_labels : 4
+  N_train : 6000
+  N_test : 830

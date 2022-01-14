@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import click
 import logging
+import hydra
 from pathlib import Path
+from variable import PROJECT_PATH
 from dotenv import find_dotenv, load_dotenv
 from torchvision import datasets, transforms
 import numpy as np
@@ -18,23 +20,44 @@ from torch.utils.data import TensorDataset, DataLoader
 import sys 
 from src.data.dataset import * 
 
-@click.command()
-@click.argument('input_filepath_data', type=click.Path(exists=True))
-@click.argument('output_filepath_model', type=click.Path(exists=True))
-@click.argument('output_plot_model', type=click.Path())
+# Note: Hydra is incompatible with @click
+@hydra.main(config_path= PROJECT_PATH / "configs",config_name="/config.yaml")
 
-def main(input_filepath_data, output_filepath_model, output_plot_model):
+#@click.command()
+#@click.argument('input_filepath_data', type=click.Path(exists=True))
+#@click.argument('output_filepath_model', type=click.Path(exists=True))
+#@click.argument('output_plot_model', type=click.Path())
+
+def main(cfg):
+
+    # for hydra parameters
+    input_filepath_data = str(PROJECT_PATH / "data" / "processed")
+    output_filepath_model = str(PROJECT_PATH / "models")
+    output_plot_model = str(PROJECT_PATH / "reports" / "figures")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print('Is CUDA? ', torch.cuda.is_available())
-    
+
+    '''
     batch_size = 4
     lr = 1e-4
     epochs = 13
+        
     print_every = 2
+
     num_labels = 4
     N_train = 6000
     N_test = 830
+    '''
+
+    print_every = cfg.hyperparameters.print_every
+    num_labels = cfg.hyperparameters.num_labels
+    N_train = cfg.hyperparameters.N_train
+    N_test = cfg.hyperparameters.N_test
+
+    epochs = cfg.hyperparameters.epochs
+    lr = cfg.hyperparameters.lr
+    batch_size = cfg.hyperparameters.batch_size
 
     # Create model, tokenizer, dataset
     model = MemeModel(config=None, device=device, num_labels=num_labels)
@@ -102,6 +125,8 @@ def main(input_filepath_data, output_filepath_model, output_plot_model):
     plt.show()
     plt.savefig(output_plot_model + '/training_plot.png')
     plt.close()
+    
+
 
 
 if __name__ == '__main__':
