@@ -1,8 +1,8 @@
 #config.yaml
 hyperparameters:
-  batch_size : 3
+  batch_size : 2
   lr : 1e-4
-  epochs : 2
+  epochs : 13
   print_every : 2
   num_labels : 4
   N_train : 6000
