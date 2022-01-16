@@ -15,6 +15,7 @@ from transformers import DistilBertTokenizer
 from Model import MemeModel
 from torch import nn
 import matplotlib.pyplot as plt
+import gc
 from torch.utils.data import TensorDataset, DataLoader
 
 import sys 
@@ -35,16 +36,18 @@ def main(cfg):
     output_filepath_model = str(PROJECT_PATH / "models")
     output_plot_model = str(PROJECT_PATH / "reports" / "figures")
 
+    gc.collect()
+
+    torch.cuda.empty_cache()
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print('Is CUDA? ', torch.cuda.is_available())
 
     '''
-    batch_size = 4
+    batch_size = 2
     lr = 1e-4
     epochs = 13
-        
     print_every = 2
-
     num_labels = 4
     N_train = 6000
     N_test = 830
@@ -75,17 +78,19 @@ def main(cfg):
     steps_list = []
 
     print_every = 100
+
     for e in range(epochs):
         # Model in training mode, dropout is on
         model.train()
         for text, labels in trainloader:
+
             steps += 1
 
             optimizer.zero_grad()
 
             y_pred, loss = model(text['input_ids'].squeeze(),
                                  text['attention_mask'].squeeze(),
-                                 labels)
+                                 labels.to(device))
 
             loss.backward()
             optimizer.step()
@@ -97,12 +102,13 @@ def main(cfg):
                 # Model in inference mode, dropout is off
                 correct_count = 0
                 for text, labels in valloader:
+
                     with torch.no_grad():
                         y, loss = model(text['input_ids'].squeeze(),
                                         text['attention_mask'].squeeze(),
-                                        labels)
-                        y = torch.argmax(y, dim=1)
-                        correct_count += torch.sum(y == labels)
+                                        labels.to(device))
+                        y = torch.argmax(y, dim=1).cpu()
+                        correct_count += torch.sum(y == labels.cpu())
                 accuracy = correct_count / len(val_set)
 
                 running_losses.append(running_loss / print_every)
@@ -115,7 +121,6 @@ def main(cfg):
 
                 running_loss = 0
 
-
     #torch.save(model.state_dict(), output_filepath_model + "models/finetuned/checkpoint.pth")
     model.save()
 
@@ -125,8 +130,6 @@ def main(cfg):
     plt.show()
     plt.savefig(output_plot_model + '/training_plot.png')
     plt.close()
-    
-
 
 
 if __name__ == '__main__':
