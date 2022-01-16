@@ -2,7 +2,7 @@
 hyperparameters:
   batch_size : 2
   lr : 1e-4
-  epochs : 13
+  epochs : 2
   print_every : 2
   num_labels : 4
   N_train : 6000
