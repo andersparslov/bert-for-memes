@@ -38,7 +38,7 @@ def main(cfg):
     torch.cuda.empty_cache()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print('Is CUDA? ', torch.cuda.is_available())
+    print('Is CUDA available? ', torch.cuda.is_available())
 
     '''
     batch_size = 2
@@ -89,10 +89,16 @@ def main(cfg):
     early_stopping_callback = EarlyStopping(
         monitor="loss", patience=3, verbose=True, mode="min"
     )
-    trainer = Trainer(gpus=1, callbacks=[early_stopping_callback])
-    print("MODEL ON CUDA?")
-    print(next(model.parameters()).is_cuda)
+    # apply Trainer according to whether or not the device is available
+    if torch.cuda.is_available():
+        trainer = Trainer(gpus=1, callbacks=[early_stopping_callback])
+    else:
+        trainer = Trainer(callbacks=[early_stopping_callback])
+
     trainer.fit(model, trainloader, valloader)
+
+    torch.save(model.state_dict(), output_filepath_model + "models/finetuned/trained_model.pth")
+    model.save()
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

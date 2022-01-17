@@ -5,6 +5,7 @@ from variable import PROJECT_PATH
 from pytorch_lightning import LightningModule
 import torch
 from torch import nn, optim
+import matplotlib.pyplot as plt
 
 
 class MemeModel(LightningModule):
@@ -14,7 +15,7 @@ class MemeModel(LightningModule):
 
         self.save_hyperparameters()
         # device = self.hparams.device_input
-        self.dev = self.hparams.device_input
+        #self.dev = self.hparams.device_input
         self.num_labels = self.hparams.num_labels_input
         '''
          'N_test': cfg.hyperparameters.N_test,
@@ -48,7 +49,7 @@ class MemeModel(LightningModule):
         else:
             model_path = "distilbert-base-uncased"
         mod_fn = DistilBertForSequenceClassification
-        self.mod = mod_fn.from_pretrained(model_path, num_labels=self.num_labels).to(self.dev)
+        self.mod = mod_fn.from_pretrained(model_path, num_labels=self.num_labels)
         if not "distilbert-base-uncased" in os.listdir(str(PROJECT_PATH / "models" / "pretrained")):
             self.mod.save_pretrained(str(PROJECT_PATH / "models" / "pretrained") + "/distilbert-base-uncased")
             # self.mod.save_pretrained("models/pretrained/distilbert-base-uncased")
@@ -73,17 +74,16 @@ class MemeModel(LightningModule):
         text, labels = batch
         y_pred, loss = self(text['input_ids'].squeeze(),
                             text['attention_mask'].squeeze(),
-                            labels.to(self.dev))
-
+                            labels)
         self.log("loss", loss)
         return loss
 
     def validation_step(self, batch, batch_idx):
         text, labels = batch
 
-        y, loss = self(text['input_ids'].squeeze().to(self.dev),
-                       text['attention_mask'].squeeze().to(self.dev),
-                       labels.to(self.dev))
+        y, loss = self(text['input_ids'].squeeze(),
+                       text['attention_mask'].squeeze(),
+                       labels)
 
         y = torch.argmax(y, dim=1).cpu()
         correct_count = torch.sum(y == labels.cpu())
