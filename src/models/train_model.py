@@ -22,21 +22,10 @@ def main(cfg):
     output_plot_model = str(PROJECT_PATH / "reports" / "figures")
 
     gc.collect()
-
     torch.cuda.empty_cache()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print('Is CUDA? ', torch.cuda.is_available())
-
-    '''
-    batch_size = 2
-    lr = 1e-4
-    epochs = 13
-    print_every = 2
-    num_labels = 4
-    N_train = 6000
-    N_test = 830
-    '''
     print(cfg.hyperparameters)
     num_labels = cfg.hyperparameters.num_labels
     N_train = cfg.hyperparameters.N_train
@@ -62,8 +51,6 @@ def main(cfg):
     running_losses = []
     steps_list = []
 
-    print_every = 100
-
     for e in range(epochs):
         # Model in training mode, dropout is on
         model.train()
@@ -73,7 +60,7 @@ def main(cfg):
 
             optimizer.zero_grad()
 
-            y_pred, loss = model(text['input_ids'].squeeze(),
+            _, loss = model(text['input_ids'].squeeze(),
                                  text['attention_mask'].squeeze(),
                                  labels.to(device))
 
