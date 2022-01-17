@@ -11,7 +11,7 @@ import argparse
 import sys
 import torch
 from transformers import DistilBertTokenizer
-from Model import MemeModel
+from Model_red_boilerplate import MemeModel
 from torch import nn
 import matplotlib.pyplot as plt
 import gc
