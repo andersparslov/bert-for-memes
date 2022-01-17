@@ -1,29 +1,19 @@
 # -*- coding: utf-8 -*-
-import click
 import logging
 from pathlib import Path
 from variable import PROJECT_PATH
 from dotenv import find_dotenv, load_dotenv
-from torchvision import datasets, transforms
-import numpy as np
 import torch
-import argparse
-import sys
 import torch
 from transformers import DistilBertTokenizer
 from Model import MemeModel
-from torch import nn
 import matplotlib.pyplot as plt
 import gc
-from torch.utils.data import TensorDataset, DataLoader
 import hydra
-
-import sys 
 from src.data.dataset import *
 
-# Note: Hydra is incompatible with @click
-@hydra.main(config_path= PROJECT_PATH / "configs",config_name="/config.yaml")
 
+@hydra.main(config_path= PROJECT_PATH / "configs",config_name="/config.yaml")
 def main(cfg):
 
     # for hydra parameters
@@ -52,13 +42,14 @@ def main(cfg):
     N_train = cfg.hyperparameters.N_train
     N_test = cfg.hyperparameters.N_test
     print_every = cfg.hyperparameters.print_every
+    save_every = cfg.hyperparameters.save_every
 
     epochs = cfg.hyperparameters.epochs
     lr = cfg.hyperparameters.lr
     batch_size = cfg.hyperparameters.batch_size
 
     # Create model, tokenizer, dataset
-    model = MemeModel(config=None, device=device, num_labels=num_labels)
+    model = MemeModel(save_every, device=device, num_labels=num_labels)
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
     dataset = Dataset(input_filepath_data,tokenizer=tokenizer,device=device)
     train_set, val_set = torch.utils.data.random_split(dataset, [N_train, N_test])
