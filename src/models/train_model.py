@@ -43,7 +43,6 @@ def main(cfg):
     N_test = cfg.hyperparameters.N_test
     print_every = cfg.hyperparameters.print_every
     save_every = cfg.hyperparameters.save_every
-
     epochs = cfg.hyperparameters.epochs
     lr = cfg.hyperparameters.lr
     batch_size = cfg.hyperparameters.batch_size
