@@ -7,3 +7,4 @@ hyperparameters:
   num_labels : 4
   N_train : 6000
   N_test : 830
+  save_every : 100
