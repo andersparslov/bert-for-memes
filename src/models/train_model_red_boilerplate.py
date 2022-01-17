@@ -38,7 +38,7 @@ def main(cfg):
     torch.cuda.empty_cache()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print('Is CUDA available? ', torch.cuda.is_available())
+    print('Is CUDA available ? ', torch.cuda.is_available())
 
     '''
     batch_size = 2
