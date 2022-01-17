@@ -11,14 +11,16 @@ import argparse
 import sys
 import torch
 from transformers import DistilBertTokenizer
-from Model import MemeModel
+from Model_red_boilerplate import MemeModel
 from torch import nn
 import matplotlib.pyplot as plt
 import gc
 from torch.utils.data import TensorDataset, DataLoader
 import hydra
+from pytorch_lightning import Trainer
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 
-import sys 
+import sys
 from src.data.dataset import *
 
 # Note: Hydra is incompatible with @click
@@ -36,7 +38,7 @@ def main(cfg):
     torch.cuda.empty_cache()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print('Is CUDA? ', torch.cuda.is_available())
+    print('Is CUDA available ? ', torch.cuda.is_available())
 
     '''
     batch_size = 2
@@ -57,8 +59,18 @@ def main(cfg):
     lr = cfg.hyperparameters.lr
     batch_size = cfg.hyperparameters.batch_size
 
+    parameters_dict = {'num_labels': cfg.hyperparameters.num_labels,
+                       'N_train': cfg.hyperparameters.N_train,
+                       'N_test': cfg.hyperparameters.N_test,
+                       'print_every': cfg.hyperparameters.print_every,
+                       'epochs': cfg.hyperparameters.epochs,
+                       'lr': cfg.hyperparameters.lr,
+                       'epochs': cfg.hyperparameters.epochs,
+                       'batch_size': cfg.hyperparameters.batch_size
+                       }
+
     # Create model, tokenizer, dataset
-    model = MemeModel(config=None, device=device, num_labels=num_labels)
+    model = MemeModel(parameters_dict=parameters_dict, device_input=device, num_labels_input=num_labels)
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
     dataset = Dataset(input_filepath_data,tokenizer=tokenizer,device=device)
     train_set, val_set = torch.utils.data.random_split(dataset, [N_train, N_test])
@@ -74,57 +86,19 @@ def main(cfg):
 
     print_every = 100
 
-    for e in range(epochs):
-        # Model in training mode, dropout is on
-        model.train()
-        for text, labels in trainloader:
+    early_stopping_callback = EarlyStopping(
+        monitor="loss", patience=3, verbose=True, mode="min"
+    )
+    # apply Trainer according to whether or not the device is available
+    if torch.cuda.is_available():
+        trainer = Trainer(gpus=1, callbacks=[early_stopping_callback])
+    else:
+        trainer = Trainer(callbacks=[early_stopping_callback])
 
-            steps += 1
+    trainer.fit(model, trainloader, valloader)
 
-            optimizer.zero_grad()
-
-            y_pred, loss = model(text['input_ids'].squeeze(),
-                                 text['attention_mask'].squeeze(),
-                                 labels.to(device))
-
-            loss.backward()
-            optimizer.step()
-
-            running_loss += loss.item()
-
-            if steps % print_every == 0:
-                model.eval()
-                # Model in inference mode, dropout is off
-                correct_count = 0
-                for text, labels in valloader:
-
-                    with torch.no_grad():
-                        y, loss = model(text['input_ids'].squeeze(),
-                                        text['attention_mask'].squeeze(),
-                                        labels.to(device))
-                        y = torch.argmax(y, dim=1).cpu()
-                        correct_count += torch.sum(y == labels.cpu())
-                accuracy = correct_count / len(val_set)
-
-                running_losses.append(running_loss / print_every)
-                mean_loss = running_loss / print_every
-                print('Epoch: {}/{} - Training loss: {:.2f} Validation accuracy {:.2f}'.format(e,
-                                                                                               epochs,
-                                                                                               mean_loss,
-                                                                                               accuracy))
-                steps_list.append(steps)
-
-                running_loss = 0
-
-    torch.save(model.state_dict(), output_filepath_model + "models/finetuned/checkpoint.pth")
+    torch.save(model.state_dict(), output_filepath_model + "models/finetuned/trained_model.pth")
     model.save()
-
-    plt.plot(steps_list, running_losses)
-    plt.legend()
-    plt.title("Training losses")
-    plt.show()
-    plt.savefig(output_plot_model + '/training_plot.png')
-    plt.close()
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
