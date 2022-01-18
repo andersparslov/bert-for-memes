@@ -11,7 +11,7 @@ class MemeModel(nn.Module):
         self.save_every = save_every
         self.device = device
 
-        # Add model folders if not presetn
+        # Add model folders if not present
         if "pretrained" not in os.listdir(str(PROJECT_PATH / "models" )):
             os.mkdir(str(PROJECT_PATH / "models" / "pretrained"))
 
