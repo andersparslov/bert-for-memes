@@ -1,4 +1,4 @@
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
+from transformers import DistilBertForSequenceClassification
 import os
 import torch.nn as nn
 from variable import PROJECT_PATH
