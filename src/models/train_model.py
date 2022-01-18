@@ -93,7 +93,7 @@ def main(cfg):
 
                 running_loss = 0
 
-    torch.save(model.state_dict(), output_filepath_model + "models/finetuned/checkpoint.pth")
+    torch.save(model.state_dict(), output_filepath_model + "/finetuned/checkpoint.pth")
     model.save()
 
     plt.plot(steps_list, running_losses)
