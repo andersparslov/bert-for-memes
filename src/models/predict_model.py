@@ -1,9 +1,11 @@
 from Model import MemeModel
 from transformers import DistilBertTokenizer
 import torch
+load_steps = 1000
 
 
 def predict_model():
+    
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
     item = tokenizer("Hello testing this meme",padding='max_length', 
               max_length = 512, truncation=True,
@@ -11,6 +13,7 @@ def predict_model():
     
     device = torch.device("cpu")
     model = MemeModel(1, device=device, num_labels=4)    
+    model.load(load_steps)
     with torch.no_grad():
         y_pred, _ = model(item['input_ids'], 
                        item['attention_mask'], 

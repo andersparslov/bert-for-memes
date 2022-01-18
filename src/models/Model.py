@@ -32,12 +32,11 @@ class MemeModel(nn.Module):
         self.steps += 1
         if self.steps % self.save_every == 0:
             self.save()
-        y = labels
-        y_pred = self.mod(input_ids, mask, labels=y)
+        y_pred = self.mod(input_ids, mask, labels=labels)
         return y_pred.logits, y_pred.loss
 
     def save(self):
-        self.mod.save_pretrained(str(PROJECT_PATH) + f"models/finetuned/distilbert-base-uncased-{self.steps}")
+        self.mod.save_pretrained(f"models/finetuned/distilbert-base-uncased-{self.steps}")
 
-    def load(self):
-        self.mod.from_pretrained(str(PROJECT_PATH) + f"models/finetuned/distilbert-base-uncased-{self.steps}")
+    def load(self, steps):
+        self.mod.from_pretrained(f"models/finetuned/distilbert-base-uncased-{steps}")
