@@ -65,3 +65,15 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+
+## How to run the project
+### Prepare the dataset:
+```
+make data
+```
+- data will be stored in ./data
+### Train the model:
+```
+make train
+```
+- model will be saved in ./models/finetuned
