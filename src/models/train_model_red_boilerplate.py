@@ -24,7 +24,6 @@ def main(cfg):
     # for hydra parameters
     input_filepath_data = str(PROJECT_PATH / "data" / "processed")
     output_filepath_model = str(PROJECT_PATH / "models")
-    output_plot_model = str(PROJECT_PATH / "reports" / "figures")
 
     gc.collect()
 

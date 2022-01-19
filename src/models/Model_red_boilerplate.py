@@ -5,8 +5,7 @@ from variable import PROJECT_PATH
 from pytorch_lightning import LightningModule
 import torch
 from torch import nn, optim
-import matplotlib.pyplot as plt
-from pytorch_lightning.loggers import WandbLogger
+
 
 class MemeModel(LightningModule):
 
