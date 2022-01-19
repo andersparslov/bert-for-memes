@@ -6,13 +6,15 @@ from dotenv import find_dotenv, load_dotenv
 
 import numpy as np
 import pickle
+import json
 import torch
 
 
 @click.command()
 @click.argument('input_filepath', type=click.Path(exists=True))
 @click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
+@click.argument('json_path', type=click.Path())
+def main(input_filepath, output_filepath, json_path):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
@@ -46,6 +48,15 @@ def main(input_filepath, output_filepath):
     with open(output_filepath,"wb") as file_handle:
         pickle.dump(data_dict, file_handle)
 
+    classification_dict = {
+                            0: 'not_funny',
+                            1: 'funny',
+                            2: 'very_funny',
+                            3: 'hilarious'
+                          }
+
+    with open(json_path + '/classification_dict.json', 'w') as fp:
+        json.dump(classification_dict, fp)
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
