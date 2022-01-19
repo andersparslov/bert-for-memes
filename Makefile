@@ -31,7 +31,7 @@ data: requirements
 
 ## Train model
 train: requirements
-	$(PYTHON_INTERPRETER) src/models/train_model.py
+	$(PYTHON_INTERPRETER) src/models/train_model_red_boilerplate.py
 
 ## Predict model
 predict: requirements
