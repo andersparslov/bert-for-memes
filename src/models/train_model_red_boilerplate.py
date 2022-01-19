@@ -78,7 +78,14 @@ def main(cfg):
 
     trainer.fit(model, trainloader, valloader)
 
-    torch.save(model.state_dict(), output_filepath_model + "/finetuned/trained_model.pth")
+    checkpoint = {
+        'parameters_dict': parameters_dict,
+        'device': device,
+        'num_labels': num_labels,
+        'state_dict': model.state_dict()
+    }
+
+    torch.save(checkpoint, output_filepath_model + "/finetuned/checkpoint.pth")
     model.save()
 
 if __name__ == '__main__':
