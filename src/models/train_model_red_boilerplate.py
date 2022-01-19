@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
-import click
 import logging
-from pathlib import Path
-from variable import PROJECT_PATH
 from dotenv import find_dotenv, load_dotenv
 from transformers import DistilBertTokenizer
 from Model_red_boilerplate import MemeModel
 import gc
-from torch.utils.data import TensorDataset, DataLoader
 import hydra
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
+from dataset import *
 
-import sys
-from src.data.dataset import *
+
+
+
+from pathlib import Path
+PROJECT_PATH = Path(__file__).resolve().parents[2]
 
 # Note: Hydra is incompatible with @click
 @hydra.main(config_path= PROJECT_PATH / "configs",config_name="/config.yaml")

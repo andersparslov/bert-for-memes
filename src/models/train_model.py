@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
 from pathlib import Path
-from variable import PROJECT_PATH
 from dotenv import find_dotenv, load_dotenv
 import torch
 import torch
@@ -10,8 +9,10 @@ from Model import MemeModel
 import matplotlib.pyplot as plt
 import gc
 import hydra
-from src.data.dataset import *
+from src.models.dataset import *
 
+from pathlib import Path
+PROJECT_PATH = Path(__file__).resolve().parents[2]
 
 @hydra.main(config_path= PROJECT_PATH / "configs",config_name="/config.yaml")
 def main(cfg):

@@ -1,7 +1,7 @@
 # Test using 'pytest tests/'
 # Or with coverage 'coverage run -m pytest tests/' use 'coverage report' after.
 from src.models.Model import MemeModel
-from src.data.dataset import Dataset
+from src.models.dataset import Dataset
 from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 from tests import _INPUT_FILE_PATH
 import torch

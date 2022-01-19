@@ -1,7 +1,9 @@
 from transformers import DistilBertForSequenceClassification
 import os
 import torch.nn as nn
-from variable import PROJECT_PATH
+
+from pathlib import Path
+PROJECT_PATH = Path(__file__).resolve().parents[2]
 
 # TODO: remake the model so it does not take a config file but the direct parameters (save_every, etc.) instead
 class MemeModel(nn.Module):

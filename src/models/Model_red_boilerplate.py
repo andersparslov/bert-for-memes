@@ -1,12 +1,13 @@
 from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 import os
 import torch.nn as nn
-from variable import PROJECT_PATH
 from pytorch_lightning import LightningModule
 import torch
 from torch import nn, optim
 import matplotlib.pyplot as plt
 
+from pathlib import Path
+PROJECT_PATH = Path(__file__).resolve().parents[2]
 
 class MemeModel(LightningModule):
 
