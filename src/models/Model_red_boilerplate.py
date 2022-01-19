@@ -27,7 +27,7 @@ class MemeModel(LightningModule):
         self.epochs = parameters_dict['epochs']
         self.batch_size = parameters_dict['batch_size']
 
-        # Add model folders if not present
+        # Add model folders if not presetn
         if "pretrained" not in os.listdir(str(PROJECT_PATH / "models")):
             os.mkdir(str(PROJECT_PATH / "models" / "pretrained"))
 
@@ -84,6 +84,9 @@ class MemeModel(LightningModule):
         correct_count = torch.sum(y == labels.cpu())
 
         accuracy = correct_count / len(batch)
+
+        self.log('val_loss', loss, prog_bar=True)
+        self.log('val_accuracy', accuracy, prog_bar=True)
 
     def configure_optimizers(self):
         learning_rate = self.lr
