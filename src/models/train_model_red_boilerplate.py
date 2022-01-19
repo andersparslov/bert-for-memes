@@ -34,16 +34,14 @@ def main(cfg):
     print('Is CUDA available ? ', torch.cuda.is_available())
 
     print(cfg.hyperparameters)
+
     num_labels = cfg.hyperparameters.num_labels
     N_train = cfg.hyperparameters.N_train
     N_test = cfg.hyperparameters.N_test
-    print_every = cfg.hyperparameters.print_every
 
-    epochs = cfg.hyperparameters.epochs
-    lr = cfg.hyperparameters.lr
     batch_size = cfg.hyperparameters.batch_size
 
-    parameters_dict = {'num_labels': cfg.hyperparameters.num_labels,
+    parameters_dict = {'save_every': cfg.hyperparameters.save_every,
                        'N_train': cfg.hyperparameters.N_train,
                        'N_test': cfg.hyperparameters.N_test,
                        'print_every': cfg.hyperparameters.print_every,
@@ -61,17 +59,9 @@ def main(cfg):
     # Define data loader and optimizer
     trainloader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
     valloader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=True)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-
-    steps = 0
-    running_loss = 0
-    running_losses = []
-    steps_list = []
-
-    print_every = 100
 
     early_stopping_callback = EarlyStopping(
-        monitor="loss", patience=3, verbose=True, mode="min"
+        monitor="val_accuracy", patience=3, verbose=True, mode="min"
     )
     wandb_logger = WandbLogger(project='wandb-lightning', job_type='train')
 
@@ -85,7 +75,7 @@ def main(cfg):
 
     trainer.fit(model, trainloader, valloader)
 
-    torch.save(model.state_dict(), output_filepath_model + "models/finetuned/trained_model.pth")
+    torch.save(model.state_dict(), output_filepath_model + "/finetuned/trained_model.pth")
     model.save()
 
 if __name__ == '__main__':
