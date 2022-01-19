@@ -9,7 +9,7 @@ import torch
 import torchvision
 from src.models.Model_red_boilerplate import MemeModel
 import hydra
-from load_checkpoint import load_checkpoint
+from src.models.load_checkpoint import load_checkpoint
 #from detectron2.export.flatten import TracingAdapter
 from src.data.dataset import *
 
