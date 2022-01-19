@@ -1,4 +1,4 @@
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
+from transformers import DistilBertTokenizer, DistilBertForSequenceClassification,  DistilBertConfig
 import os
 import torch.nn as nn
 from variable import PROJECT_PATH
@@ -38,7 +38,17 @@ class MemeModel(LightningModule):
             model_path = str(PROJECT_PATH / "models" / "pretrained") + "/distilbert-base-uncased"
         else:
             model_path = "distilbert-base-uncased"
-        mod_fn = DistilBertForSequenceClassification
+
+        config = DistilBertConfig(
+            vocab_size_or_config_json_file=32000,
+            hidden_size=768,
+            num_hidden_layers=12,
+            num_attention_heads=12,
+            intermediate_size=3072,
+            torchscript=True,
+        )
+
+        mod_fn = DistilBertForSequenceClassification(config)
         self.mod = mod_fn.from_pretrained(model_path, num_labels=self.num_labels)
         if not "distilbert-base-uncased" in os.listdir(str(PROJECT_PATH / "models" / "pretrained")):
             self.mod.save_pretrained(str(PROJECT_PATH / "models" / "pretrained") + "/distilbert-base-uncased")

@@ -23,11 +23,10 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 import sys
 from src.data.dataset import *
 
+
 # Note: Hydra is incompatible with @click
-@hydra.main(config_path= PROJECT_PATH / "configs",config_name="/config.yaml")
-
+@hydra.main(config_path=PROJECT_PATH / "configs", config_name="/config.yaml")
 def main(cfg):
-
     # for hydra parameters
     input_filepath_data = str(PROJECT_PATH / "data" / "processed")
     output_filepath_model = str(PROJECT_PATH / "models")
@@ -61,14 +60,14 @@ def main(cfg):
     # Create model, tokenizer, dataset
     model = MemeModel(parameters_dict=parameters_dict, device_input=device, num_labels_input=num_labels)
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-    dataset = Dataset(input_filepath_data,tokenizer=tokenizer,device=device)
+    dataset = Dataset(input_filepath_data, tokenizer=tokenizer, device=device)
     train_set, val_set = torch.utils.data.random_split(dataset, [N_train, N_test])
     # Define data loader and optimizer
     trainloader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
     valloader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=True)
 
     early_stopping_callback = EarlyStopping(
-        monitor="val_accuracy", patience=3, verbose=True, mode="min"
+        monitor="val_accuracy", patience=1, verbose=True, mode="min"
     )
     # apply Trainer according to whether or not the device is available
     if torch.cuda.is_available():
@@ -78,8 +77,16 @@ def main(cfg):
 
     trainer.fit(model, trainloader, valloader)
 
-    torch.save(model.state_dict(), output_filepath_model + "/finetuned/trained_model.pth")
+    checkpoint = {
+        'parameters_dict': parameters_dict,
+        'device': device,
+        'num_labels': num_labels,
+        'state_dict': model.state_dict()
+    }
+
+    torch.save(checkpoint, output_filepath_model + "/finetuned/checkpoint.pth")
     model.save()
+
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
