@@ -53,7 +53,7 @@ def main(cfg):
     # Create model, tokenizer, dataset
     model = MemeModel(parameters_dict=parameters_dict, device_input=device, num_labels_input=num_labels)
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-    dataset = Dataset(input_filepath_data,tokenizer=tokenizer,device=device)
+    dataset = Dataset(input_filepath_data + '/data.pkl' ,tokenizer=tokenizer,device=device)
     train_set, val_set = torch.utils.data.random_split(dataset, [N_train, N_test])
     # Define data loader and optimizer
     trainloader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
@@ -73,6 +73,13 @@ def main(cfg):
         trainer = Trainer(callbacks=[early_stopping_callback])
 
     trainer.fit(model, trainloader, valloader)
+
+    checkpoint = {
+        'parameters_dict': parameters_dict,
+        'device': device,
+        'num_labels': num_labels,
+        'state_dict': model.state_dict()
+    }
 
     checkpoint = {
         'parameters_dict': parameters_dict,
