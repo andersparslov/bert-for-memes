@@ -27,7 +27,7 @@ requirements: test_environment
 
 ## Make Dataset
 data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed data
+	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw/labels_pd_pickle data/processed/data.pkl data
 
 ## Train model
 train: requirements
