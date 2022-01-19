@@ -58,7 +58,6 @@ def main(input_filepath, output_filepath, json_path):
     with open(json_path + '/classification_dict.json', 'w') as fp:
         json.dump(classification_dict, fp)
 
-
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)

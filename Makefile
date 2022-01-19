@@ -27,7 +27,7 @@ requirements: test_environment
 
 ## Make Dataset
 data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw/labels_pd_pickle data/processed/data.pkl data
+	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed data
 
 ## Train model
 train: requirements
@@ -150,4 +150,3 @@ help:
 		printf "\n"; \
 	}' \
 	| more $(shell test $(shell uname) = Darwin && echo '--no-init --raw-control-chars')
-

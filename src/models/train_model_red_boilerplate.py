@@ -4,21 +4,14 @@ import logging
 from pathlib import Path
 from variable import PROJECT_PATH
 from dotenv import find_dotenv, load_dotenv
-from torchvision import datasets, transforms
-import numpy as np
-import torch
-import argparse
-import sys
-import torch
 from transformers import DistilBertTokenizer
 from Model_red_boilerplate import MemeModel
-from torch import nn
-import matplotlib.pyplot as plt
 import gc
 from torch.utils.data import TensorDataset, DataLoader
 import hydra
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from pytorch_lightning.loggers import WandbLogger
 
 import sys
 from src.data.dataset import *
@@ -31,7 +24,6 @@ def main(cfg):
     # for hydra parameters
     input_filepath_data = str(PROJECT_PATH / "data" / "processed")
     output_filepath_model = str(PROJECT_PATH / "models")
-    output_plot_model = str(PROJECT_PATH / "reports" / "figures")
 
     gc.collect()
 
@@ -70,9 +62,13 @@ def main(cfg):
     early_stopping_callback = EarlyStopping(
         monitor="val_accuracy", patience=3, verbose=True, mode="min"
     )
+    wandb_logger = WandbLogger(project='wandb-lightning', job_type='train')
+
     # apply Trainer according to whether or not the device is available
     if torch.cuda.is_available():
-        trainer = Trainer(gpus=1, callbacks=[early_stopping_callback])
+        trainer = Trainer(progress_bar_refresh_rate=50, gpus=1,
+                          logger=wandb_logger, callbacks=[early_stopping_callback])
+
     else:
         trainer = Trainer(callbacks=[early_stopping_callback])
 
