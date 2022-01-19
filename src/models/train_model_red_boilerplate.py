@@ -8,12 +8,9 @@ import hydra
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
-from dataset import *
-
-
-
-
+from src.data.dataset import *
 from pathlib import Path
+
 PROJECT_PATH = Path(__file__).resolve().parents[2]
 
 # Note: Hydra is incompatible with @click
@@ -53,7 +50,7 @@ def main(cfg):
     # Create model, tokenizer, dataset
     model = MemeModel(parameters_dict=parameters_dict, device_input=device, num_labels_input=num_labels)
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-    dataset = Dataset(input_filepath_data + '/data.pkl' ,tokenizer=tokenizer,device=device)
+    dataset = Dataset(input_filepath_data + '/data.pkl', tokenizer=tokenizer, device=device)
     train_set, val_set = torch.utils.data.random_split(dataset, [N_train, N_test])
     # Define data loader and optimizer
     trainloader = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuffle=True)
@@ -81,15 +78,9 @@ def main(cfg):
         'state_dict': model.state_dict()
     }
 
-    checkpoint = {
-        'parameters_dict': parameters_dict,
-        'device': device,
-        'num_labels': num_labels,
-        'state_dict': model.state_dict()
-    }
-
     torch.save(checkpoint, output_filepath_model + "/finetuned/checkpoint.pth")
     model.save()
+
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
