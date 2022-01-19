@@ -73,7 +73,13 @@ make data
 ```
 - data will be stored in ./data
 ### Train the model:
+- initialize wandb logging first
+```
+wandb init
+```
+- train the model:
 ```
 make train
 ```
 - model will be saved in ./models/finetuned
+- training plots will be logged using wandb
