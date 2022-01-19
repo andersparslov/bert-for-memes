@@ -4,7 +4,6 @@ from pathlib import Path
 from variable import PROJECT_PATH
 from dotenv import find_dotenv, load_dotenv
 import torch
-import torch
 from transformers import DistilBertTokenizer
 from Model import MemeModel
 import matplotlib.pyplot as plt
@@ -59,11 +58,9 @@ def main(cfg):
             steps += 1
 
             optimizer.zero_grad()
-
             _, loss = model(text['input_ids'].squeeze(),
-                                 text['attention_mask'].squeeze(),
-                                 labels.to(device))
-
+                            text['attention_mask'].squeeze(),
+                            labels.to(device))
             loss.backward()
             optimizer.step()
 

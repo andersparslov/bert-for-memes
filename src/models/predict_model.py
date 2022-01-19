@@ -4,11 +4,11 @@ import torch
 load_steps = 1000
 
 
-def predict_model():
+def predict_model(text):
     
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-    item = tokenizer("Hello testing this meme",padding='max_length', 
-              max_length = 512, truncation=True,
+    item = tokenizer(text, padding='max_length', 
+              max_length=512, truncation=True,
               return_tensors="pt")
     
     device = torch.device("cpu")

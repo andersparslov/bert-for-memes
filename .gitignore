@@ -90,6 +90,8 @@ target/
 # Requirements
 requirements.txt
 
+#data/
+
 # Models 
 models/
 models/finetuned/.
