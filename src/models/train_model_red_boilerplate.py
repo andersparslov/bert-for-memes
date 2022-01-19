@@ -21,7 +21,7 @@ from src.data.dataset import *
 
 def main(cfg):
 
-    # for hydra parameters
+    #for hydra parameters
     input_filepath_data = str(PROJECT_PATH / "data" / "processed")
     output_filepath_model = str(PROJECT_PATH / "models")
 
