@@ -6,7 +6,7 @@ from pytorch_lightning import LightningModule
 import torch
 from torch import nn, optim
 import matplotlib.pyplot as plt
-
+from pytorch_lightning.loggers import WandbLogger
 
 class MemeModel(LightningModule):
 
@@ -75,7 +75,15 @@ class MemeModel(LightningModule):
         y_pred, loss = self(text['input_ids'].squeeze(),
                             text['attention_mask'].squeeze(),
                             labels)
-        self.log("loss", loss)
+
+        y_pred = torch.argmax(y_pred, dim=1).cpu()
+        correct_count = torch.sum(y_pred == labels.cpu())
+
+        accuracy = correct_count / len(batch)
+        #self.log("loss", loss)
+        self.log('train_loss', loss, on_step=True, on_epoch=True, logger=True)
+        self.log('train_accuracy', accuracy, on_step=True, on_epoch=True, logger=True)
+
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -89,7 +97,9 @@ class MemeModel(LightningModule):
         correct_count = torch.sum(y == labels.cpu())
 
         accuracy = correct_count / len(batch)
-        self.log("val_accuracy", loss)
+
+        self.log('val_loss', loss, prog_bar=True)
+        self.log('val_accuracy', accuracy, prog_bar=True)
 
     def configure_optimizers(self):
         learning_rate = self.lr
