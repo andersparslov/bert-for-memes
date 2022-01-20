@@ -16,7 +16,8 @@ def main(input_filepath, output_filepath, json_path):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
-    os.mkdir('data/processed')
+    if 'processed' not in os.listdir('data'):
+        os.mkdir('data/processed')
     logger = logging.getLogger(__name__)
     logger.info('making final data set from raw data')
 
