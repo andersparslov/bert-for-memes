@@ -85,7 +85,7 @@ wandb init
 ```
 make train
 ```
-- edit config.yaml to configure hyperparameters
+- edit "configs/config.yaml" to configure hyperparameters
 - model will be saved in ./models/finetuned
 - training plots will be logged using wandb
 - model checkpoints will be saved at "models/finetuned"
