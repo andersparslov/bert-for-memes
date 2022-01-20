@@ -98,3 +98,6 @@ models/finetuned/.
 models/pretrained/.
 *.bin
 *.json
+
+# Outputs
+outputs/
