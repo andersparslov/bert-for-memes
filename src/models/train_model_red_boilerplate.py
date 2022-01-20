@@ -10,12 +10,13 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from src.data.dataset import *
 from pathlib import Path
+import wandb
+
 
 PROJECT_PATH = Path(__file__).resolve().parents[2]
 
 # Note: Hydra is incompatible with @click
 @hydra.main(config_path= PROJECT_PATH / "configs",config_name="/config.yaml")
-
 def main(cfg):
 
     # for hydra parameters
@@ -34,6 +35,9 @@ def main(cfg):
     num_labels = cfg.hyperparameters.num_labels
     N_train = cfg.hyperparameters.N_train
     N_test = cfg.hyperparameters.N_test
+    wandb_username = cfg.hyperparameters.wandb_username
+    #if wandb_username is not None:
+    #    wandb.init(project="wandb-lightning", entity=wandb_username)
 
     batch_size = cfg.hyperparameters.batch_size
 
@@ -59,15 +63,14 @@ def main(cfg):
     early_stopping_callback = EarlyStopping(
         monitor="val_accuracy", patience=3, verbose=True, mode="min"
     )
-    wandb_logger = WandbLogger(project='wandb-lightning', entity="andersparslov", job_type='train')
+    wandb_logger = WandbLogger(project='wandb-lightning', entity=wandb_username, job_type='train')
 
     # apply Trainer according to whether or not the device is available
     if torch.cuda.is_available():
         trainer = Trainer(progress_bar_refresh_rate=50, gpus=1,
                           logger=wandb_logger, callbacks=[early_stopping_callback])
-
     else:
-        trainer = Trainer(callbacks=[early_stopping_callback])
+        trainer = Trainer(callbacks=[early_stopping_callback], logger=wandb_logger)
 
     trainer.fit(model, trainloader, valloader)
 

@@ -98,3 +98,4 @@ models/finetuned/.
 models/pretrained/.
 *.bin
 *.json
+configs/config.yaml

@@ -8,3 +8,4 @@ hyperparameters:
   N_train : 6000
   N_test : 830
   save_every : 100000000
+  wandb_username : "andersparslov"
