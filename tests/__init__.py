@@ -1,7 +1,7 @@
 import os
 
 _N_TRAIN = 6830
-_INPUT_FILE_PATH = "data/processed"
+_INPUT_FILE_PATH = "data/processed/data.pkl"
 _MODELS_FILE_PATH = "models/"
 
 

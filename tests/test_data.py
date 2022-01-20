@@ -3,7 +3,7 @@
 from tests import _INPUT_FILE_PATH, _N_TRAIN
 import torch
 import numpy as np
-from src.models.dataset import Dataset
+from src.data.dataset import Dataset
 from transformers import DistilBertTokenizer
 
 # Test training data

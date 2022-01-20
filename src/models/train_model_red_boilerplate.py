@@ -70,7 +70,8 @@ def main(cfg):
         trainer = Trainer(progress_bar_refresh_rate=50, gpus=1,
                           logger=wandb_logger, callbacks=[early_stopping_callback])
     else:
-        trainer = Trainer(callbacks=[early_stopping_callback], logger=wandb_logger)
+        trainer = Trainer(callbacks=[early_stopping_callback], logger=wandb_logger,
+                          log_every_n_steps=5)
 
     trainer.fit(model, trainloader, valloader)
 

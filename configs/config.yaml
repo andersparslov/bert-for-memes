@@ -1,7 +1,7 @@
 #config.yaml
 hyperparameters:
-  batch_size : 2
-  lr : 1e-4
+  batch_size : 10
+  lr : 1e-5
   epochs : 2
   print_every : 2
   num_labels : 4
