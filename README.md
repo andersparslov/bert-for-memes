@@ -68,7 +68,9 @@ Project Organization
 
 ## How to run the project
 ### Clone the project:
+```
 git clone https://github.com/andersparslov/bert-for-memes
+```
 ### Download data:
 Download the data at https://www.kaggle.com/williamscott701/memotion-dataset-7k and put "labels_pd_pickle" into the "data/raw" folder.
 ### Prepare the dataset:
@@ -90,4 +92,6 @@ make train
 - training plots will be logged using wandb
 - model checkpoints will be saved at "models/finetuned"
 ### Query deployed model:
+```
 python meme_request.py
+```
