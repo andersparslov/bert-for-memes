@@ -1,0 +1,1 @@
+Download data from https://www.kaggle.com/williamscott701/memotion-dataset-7k and put "labels_pd_pickle" file in this directory.
