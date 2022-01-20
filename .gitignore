@@ -90,7 +90,8 @@ target/
 # Requirements
 requirements.txt
 
-#data/
+data/raw/labels_pd_pickle
+data/processed/data.pkl
 
 # Models 
 models/

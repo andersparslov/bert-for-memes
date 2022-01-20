@@ -1,0 +1,9 @@
+hyperparameters:
+  batch_size: 2
+  lr: 0.0001
+  epochs: 2
+  print_every: 2
+  num_labels: 4
+  N_train: 6000
+  N_test: 830
+  save_every: 100000000
