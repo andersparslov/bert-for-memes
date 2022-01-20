@@ -77,7 +77,7 @@ Download the data at https://www.kaggle.com/williamscott701/memotion-dataset-7k 
 ```
 make data
 ```
-- data will be stored in ./data
+- processed data will be stored in ./data/processed
 ### Train the model:
 - initialize wandb logging first
 ```
