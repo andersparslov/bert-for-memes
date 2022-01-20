@@ -6,6 +6,7 @@ matplotlib==3.5.0
 numpy==1.21.4
 python-dotenv==0.19.2
 pytorch_lightning==1.5.8
+requests==2.27.1
 setuptools==59.5.0
 torch==1.10.1
 transformers==4.15.0

@@ -59,7 +59,7 @@ def main(cfg):
     early_stopping_callback = EarlyStopping(
         monitor="val_accuracy", patience=3, verbose=True, mode="min"
     )
-    wandb_logger = WandbLogger(project='wandb-lightning', job_type='train')
+    wandb_logger = WandbLogger(project='wandb-lightning', entity="andersparslov", job_type='train')
 
     # apply Trainer according to whether or not the device is available
     if torch.cuda.is_available():
