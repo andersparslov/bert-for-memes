@@ -67,6 +67,10 @@ Project Organization
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 
 ## How to run the project
+### Clone the project:
+git clone https://github.com/andersparslov/bert-for-memes
+### Download data:
+Download the data at https://www.kaggle.com/williamscott701/memotion-dataset-7k and put "labels_pd_pickle" into the "data/raw" folder.
 ### Prepare the dataset:
 ```
 make data
@@ -81,5 +85,9 @@ wandb init
 ```
 make train
 ```
+- edit config.yaml to configure hyperparameters
 - model will be saved in ./models/finetuned
 - training plots will be logged using wandb
+- model checkpoints will be saved at "models/finetuned"
+### Query deployed model:
+python meme_request.py
